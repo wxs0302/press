@@ -1,49 +1,110 @@
----
-outline: deep
----
+# 系统介绍
+ok,这是一个开发工程师梳理的`入职宝典`，虽不妙语连珠但也字字珠玑，主要是带你快速的过一遍全貌，在你向同事咨询的时候`得知道该怎么问`。
 
-# Runtime API Examples
+## 系统架构
+- 这里只展示架构图，下面对各个板块逐个讲解
 
-This page demonstrates usage of some of the runtime APIs provided by VitePress.
+<img src="/images/jiagou.png"></img>
 
-The main `useData()` API can be used to access site, theme, and page data for the current page. It works in both `.md` and `.vue` files:
 
-```md
-<script setup>
-import { useData } from 'vitepress'
+## 你大概率会接触到的项目类型
+### 🏠️平台
+- 公司的产品
+### 🏘️个性化
+- 公司的产品+甲方的需求实现
 
-const { theme, page, frontmatter } = useData()
-</script>
+## 前情提要
+1. 不知道的事`直接问同事`，别自己铜鼓
+2. 分配了业务`别着急写`，`看看曾经`页面和后端是怎么写的，建议问迪哥要个例子，或者看本网站导航上的 方法大全->[CURD代码参考](/curd/curd.html)
 
-## Results
+3. `I人性格`可以走了
 
-### Theme Data
-<pre>{{ theme }}</pre>
+## 前端Express
+### 简介
+- 前端使用的是`集成常用库`和你的同事`封装插件`与魔改的Express形成的前端
 
-### Page Data
-<pre>{{ page }}</pre>
+### 你不知道的事
+- 项目根目录的config.js文件里面包含了`单点登录` `网关` `别名配置(与网关有关)`  的配置信息 这很重要
+- 页面导航上的菜单不是由你书写的HTML，而是去请求拿回来的`菜单`(公司里称之为模块)
+- `模块`是在数据库中配置的，我建议你找迪哥帮你配置
+- 注意！`node_modules`依赖库 部门给你准备了SVN地址，也分`7.0`版本 和 `<7.0`版本,缺的你
+- 不要在项目里直接npm install下载任何库,因为`package.json`中没有依赖描述，会清空`node_modules`，可以从外面下载好，在复制到文件夹里
+- 页面的接口请求是`html通过ajax` 请求`express路由`， 再由路由`转发给网关` 网关转发给最终的`Java服务`
+- 别试图用`postman`跑你的route接口，需要cookie，即便你把cookie粘贴到postman里，也不行，因为你改了路由代码，服务重启登录状态就丢了。
+- 历史的路由代码中，你可以看到里面请求java使用了`safeJpa`请求方法,简单来说,这里面把你的`参数结构封装了`,java那边接收参数会有 `token`的字符串holdtime验证 和`参数安全验证`(sql关键词防止注入),这里不好粘贴代码，你直接问同事`云翔`,如果你想用postman调试接口的话，
+- 所以你如果跟别人一块开发,后端目标地址还不是同一个，或者没有线上的网关可以给你用，你就要用自己的电脑 跑`网关jar包`把网关配置地址改成你自己的IP和端口
+- 单点登录也是同理，所以最差的情况 是需要你电脑同时跑 `前端代码` `单点登录` `网关` `Java服务` 这四个项目，建议你掌握一下，而且注意 单点登录和网关分 `7.0版本` 和 `<7.0版本`
+- 不要为了热更新想要把`vite`挂载到`express`上，试过了会出大问题
 
-### Page Frontmatter
-<pre>{{ frontmatter }}</pre>
-```
+### 关于开发
+- 一般你开发的菜单都会在数据库中配置好了，根据提供给你的文档，你可以在views/xxx/xxx找到
+- 你自己页面的静态资源都需要放到public/xxx/xxx 这里xxx表示的是目录结构以及名称要一致，文档中会有具体的名称命名规则
+- 页面中的资源引入 路径一定要使用` <%=resourceurl %>/xxx/xxxx/xxx.js` resourceurl这个常亮就是指向public目录，这个插值表达式ejs模板引擎提供的，你可以这样理解`resourceurl`就是从路由传递过来的值,因为你开发的东西后续会整合到平台全量代码中,你以为的绝对路径和相对路径都不稳妥
+- 页面绝大多数组件都在使用`easyUI`，先看同事写过的代码，`推荐看迪哥的`，简单易懂，然后再根据`easyUI官网文档`组件使用方法去编写页面、业务、数据交互
 
-<script setup>
-import { useData } from 'vitepress'
+## 网关
+- 源码只读过一次，除了按照`数据表中的配置`去路由请求，再就是有硬件类似于`加密狗`的验证，感兴趣可以多了解，没啥好说的，你用就完了，`注意前端配置`
+- 你不知道的事
+    - 网关的配置在项目的`sqlite`本地数据库中,去java源码的配置文件里能看到存储路径
+    - 网关有一个web配置的界面，是一个`单独的java项目`
+    - 你前端配置的`别名`可以被网关路由到不同的后端服务上
+    - `源码`迪哥或者云翔都有
 
-const { site, theme, page, frontmatter } = useData()
-</script>
+## 单点登录
+- 没读源码，没啥好说的，你用就完了，`注意前端配置`
+- 有线上就用，没有就去要源码`自己起`
+- 源码迪哥或者云翔都有
 
-## Results
+## 后端Java
+### 简介
+- 后端没有很复杂，为了保证兼容Oracle、Sql server、达梦、金仓等数据库，只是采用`HQL`这种底层查询方式，或者说只是用了`hibernate`，因为HQL会走`方言类`转义为对应数据库的sql语句，`不要用NativeQuery`。开发还是常规的三层架构，Controller、Service、Repository,(实现JpaRepository会有少量方法可以使用)
 
-### Theme Data
-<pre>{{ theme }}</pre>
+### 你不知道的事
+- 团队里开发工具有Idea和Eclipse，使用IEDA打开项目的时候注意勾选IDEA
+- 还是老规则去看之前项目的代码,里面有丰富的`CURD`、`关联查询`、`分页查询`、`事务`、`Group统计查询`,迪哥可以给你一个DEMO
+- 不要试图使用JPA的特性，实体的ASD_ASD`大写下划线分割属性命名`，JPA无法转义和映射赋值,更不要去修改Jackson和fastjson的全局转义配置
+- `Service`中要使用HQL和底层查询方法，`BaseService`给你提供了`EntityManager`,也有一些封装的`search`查询方法
+- `baseController`给你提供了获取参数的方法,控制器是接收json字符串的，不是实体类/DTO/PO之类的，你可以理解为PHP的接受参数的方式，EntityManager查询回的结果也是以`Map映射`，甚至可以不需要准备实体类。
 
-### Page Data
-<pre>{{ page }}</pre>
+## 关于封装
+#### 当你听到 `封装` 这个词的时候，请你认真的向这个人请教，`问到底`，因为会出现以下几种情况
 
-### Page Frontmatter
-<pre>{{ frontmatter }}</pre>
+- `通用JS`
+    - 每个页面都会引入Jquery easyUI ztree等常用库
+    - 再次强调，也要注意导入public中的内容 要使用模板插值表达式
+    - <%=resourceurl %>/xxx/xxxx/xxx		
+    - 因为你开发的东西后续会整合到平台全量代码中
+    - 你以为的绝对路径和相对路径都不稳妥
 
-## More
+- `类名`
+	- easyui
+        - 通用JS中有一个js会把你页面中所有按照easyui类命名的dom，实例化为easyui的组件
+        - 这部分你必须看一下历史代码和官方文档
+        - 提示：某个组件如果你没找到方法，比如监听，有可能在它的父类中，比如combo这个大父类
 
-Check out the documentation for the [full list of runtime APIs](https://vitepress.dev/reference/runtime-api#usedata).
+	- 布局类
+        - 为了方便布局，同事准备一些className，用于便捷的创建出布局，这块不贴代码了，迪哥几分钟给你说明白
+	
+
+- `助手函数`
+	- 地图助手函数库
+        - 地图是一个JS库
+        - 地图还封装了另一个库,很多操作HoldMap对象的操作，比如缩放平移啥打点啥的
+        - 但是我建议你得到HoldMap对象后，如果没有人指导你用助手函数
+        - 那么你就看对应的官方文档，比如mars3D、arcgis、cesium啥的
+
+- `历史项目粘贴`
+	- 地图
+	- 文件上传
+	- Excel导出（左侧导航有一种可以使用）
+    - 以上三类以及其他没提到的,你就找人问吧，因为涉及到从历史项目拷贝代码，所以要问到底，直到你的画面中出现了它。
+- `本网站提供的`
+    - 左侧导航UAP媒体管理插件，按照标准Jquery插件编写。
+
+# 关于地图
+- 配置
+    - 地图第一步类似与开通权限，需要在数据库上配置你这个模块允许访问的地图、类型、底图服务
+- 代码在哪	
+    - 00Frame 一眼能看到GIS
+- 同理别自己琢磨，去问。
+- 逻辑就是先获取配置，然后根据配置调用不同的类库初始化地图对象

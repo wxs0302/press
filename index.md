@@ -8,8 +8,9 @@ hero:
   tagline: My great project tagline
   actions:
     - theme: brand
-      text: 快速了解文件上传
-      link: /uploadAndPreview/uploadAndPreview
+      text: 入职宝典
+      link: /api-examples
+
     - theme: alt
       text: 其他文档正在补充中
       link: /api-examples

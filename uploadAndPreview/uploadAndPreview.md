@@ -1,10 +1,23 @@
-# 文件上传与预览 v1.0.0
+# 文件上传与预览 v1.0.1
+## 特点
+1. 支持图片和视频
+2. 支持自定义选项卡数量和内容
+3. 你可以只用这个组件 而不使用另外route和java代码也是可以的
+<br/>
+<div style="display:flex">
+<img src="/images/upload.png" style="width:50%"></img>
+<img src="/images/preview.png" style="width:50%"></img>
+<br/>
+<br/>
+<br/>
+</div>
+
 
 ## ⚠ 只需要阅读一次！不要紧张文字数量，实际简单到爆💥!
-- 本模块文档包含[三个业务处理](#)，你可以选择三个都用
-- 也可以任选其一、二，其他的自己写代码
+- 本模块文档包含`三个业务处理`，你可以选择`三个都用`
+- 也可以`任选其一、二`，其他的自己写代码
 
-### 1️⃣ [前端媒体资源浏览与上传 组件](#)
+### 1️⃣ [前端媒体资源浏览与上传 组件](/uploadAndPreview/code.html)
 - uploadAndPreview.js (后面简称UAP) 
 
 ### 2️⃣ [Express Route 接收上传文件，保存文件与文件元数据提取发送Java服务](#)
@@ -19,10 +32,21 @@
 
 <br/>
 <br/>
+
+# 直接看系列
+- 但是我建议你先看看下面的使用说明,再去看代码
+
+✈️[前端怎么用](/uploadAndPreview/html.html)
+
+✈️[路由怎么用](/uploadAndPreview/route.html)
+
+✈️[后端怎么用](/uploadAndPreview/java.html)
+
 <br/>
 <br/>
 
-# 开始使用
+# 使用说明
+
 ## 两步就能看见结果
 ### 1️⃣ 引入JS 
 ### 2️⃣ 初始化 
@@ -54,8 +78,8 @@
         upload: function (file) { 
             //介绍:这里是【上传附件按钮】点击选择文件后的【回调函数】
             //逻辑:后续就是把file发送给【Express Route】存储文件和获取文件信息
-            //提示:【上传成功】记得获取新数据列表并【更新列表 】
-            //$("#asd").uploadAndPreview("setData",[新列表])
+            //提示:【上传成功】记得把新媒体插进去
+            //$("#asd").uploadAndPreview("insetData",[新列表])
         }
     })
 ```
@@ -105,4 +129,14 @@ $("#asd").uploadAndPreview("setData", [
     }
 ])
 
+```
+## insertData(data) 
+- 把提交成功的新文件插入进列表
+```javascript
+$("#fileUpload").uploadAndPreview("insertData", {
+    id: id,
+    text: operate_TIME,
+    filePath: media_PATH,
+    type: media_TYPE
+})
 ```
